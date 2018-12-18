@@ -84,7 +84,7 @@ void main()
 			WSACleanup();
 			return;
 		}
-		else { // if the client is connected to a server
+		else { // If the client is connected to a server
 			cout << "Hi " + name + ". Welcome to the server!" << endl;
 
 			// thread 1 starts running the send message function
@@ -98,7 +98,7 @@ void main()
 			t2.join();
 		}
 
-		// Gracefully close down everything
+		// Close down everything
 		closesocket(sock);
 		WSACleanup();
 	}

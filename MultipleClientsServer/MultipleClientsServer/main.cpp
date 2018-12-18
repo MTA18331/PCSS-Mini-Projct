@@ -14,18 +14,18 @@ void main() {
 
 	int wsOk = WSAStartup(ver, &wsData);
 	if (wsOk != 0) {
-		cerr << "Can't intialize winsock... Quitting!" << endl;
+		cerr << "Can't intialize winsock and will therefore shut down the program!" << endl;
 		return;
 	}
 
 	// create a socket
 	SOCKET listening = socket(AF_INET, SOCK_STREAM, 0);
 	if (listening == INVALID_SOCKET) {
-		cerr << "Can't create socket... Quitting!" << endl;
+		cerr << "Can't create socket and will therefore shut down the program!" << endl;
 		return;
 	}
 
-	// bind the socket to an ip adress and port
+	// Bind the socket to an ip adress and port 54000
 	sockaddr_in hint;
 	hint.sin_family = AF_INET;
 	hint.sin_port = htons(54000);
@@ -33,7 +33,7 @@ void main() {
 
 	bind(listening, (sockaddr*)&hint, sizeof(hint));
 
-	// tell winsock that the socket is for listening
+	// Telling winsock that the socket is for listening
 	listen(listening, SOMAXCONN);
 
 	fd_set master;
@@ -75,7 +75,7 @@ void main() {
 					FD_CLR(sock, &master);
 				}
 				else {
-					// Send message to other clients, and definiately NOT the listening socket.
+					// Send message to other clients, without sending it to outSock and the listening socket.
 
 					for (int i = 0; i < master.fd_count; i++) {
 						SOCKET outSock = master.fd_array[i];

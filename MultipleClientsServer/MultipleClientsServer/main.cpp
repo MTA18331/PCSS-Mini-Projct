@@ -62,14 +62,6 @@ void main() {
 				// Add the new connection to the list of connected clients
 				FD_SET(clientSock, &master);
 
-				// Send a welcome message to the connected client
-				string welcomeMsg = "Hi Cunt. Welcome to the Server!\r\n";
-				send(clientSock, welcomeMsg.c_str(), welcomeMsg.size() + 1, 0);
-
-				// Ask for name
-				string namePromt = "Please enter your name: ";
-				send(clientSock, namePromt.c_str(), namePromt.size() + 1, 0);
-
 			}
 			else {
 				char buf[4096];
@@ -88,6 +80,7 @@ void main() {
 					for (int i = 0; i < master.fd_count; i++) {
 						SOCKET outSock = master.fd_array[i];
 						if (outSock != listening && outSock != sock) {
+							
 							ostringstream ss;
 							ss << "User " << sock << ": " << buf;
 							string strOut = ss.str();

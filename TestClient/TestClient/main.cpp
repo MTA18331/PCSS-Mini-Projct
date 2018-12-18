@@ -7,7 +7,8 @@ using namespace std;
 
 #pragma comment(lib, "ws2_32.lib")
 
-SOCKET sock;
+SOCKET sock; // Makes the variable name sock accesible in the functions below
+string name = "unknown"; // name is used as an input-variable for a name prompt later
 
 void receiveMessage() {
 
@@ -65,23 +66,40 @@ void main()
 	hint.sin_port = htons(port);
 	inet_pton(AF_INET, ipAddress.c_str(), &hint.sin_addr);
 
-	// Connect to server
-	int connResult = connect(sock, (sockaddr*)&hint, sizeof(hint));
-	if (connResult == SOCKET_ERROR) { // if the client failed to connect to a server
-		cerr << "Can't connect to server, Error #" << WSAGetLastError() << endl;
-		closesocket(sock); 
-		WSACleanup();
-		return;
+	// Prompt the user for her or his name
+	cout << "Please enter your name:" << endl;
+	cin >> name;
+	
+	// Send the entered name to the server
+	if (name == "unknown") {
+		cerr << "Name Prompt Failed... Quitting";
 	}
-	else { // if the client is connected to a server
-		
-		thread t1(sendMessage); // thread 1 starts running
-		t1.detach();
-		thread t2(receiveMessage); // thread 2 starts running
-		t2.join();
-	}
+	else {
 
-	// Gracefully close down everything
-	closesocket(sock);
-	WSACleanup();
+		// Connect to server
+		int connResult = connect(sock, (sockaddr*)&hint, sizeof(hint));
+		if (connResult == SOCKET_ERROR) { // if the client failed to connect to a server
+			cerr << "Can't connect to server, Error #" << WSAGetLastError() << endl;
+			closesocket(sock);
+			WSACleanup();
+			return;
+		}
+		else { // if the client is connected to a server
+			cout << "Hi " + name + ". Welcome to the server!" << endl;
+
+			// thread 1 starts running the send message function
+			thread t1(sendMessage);
+
+			// thread 1 detaches to continue running while thread 2 starts 
+			t1.detach();
+
+			// thread 2 starts running
+			thread t2(receiveMessage);
+			t2.join();
+		}
+
+		// Gracefully close down everything
+		closesocket(sock);
+		WSACleanup();
+	}
 }
